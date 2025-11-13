@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkAI - Aviso do Bill Cipher</title>
+    <link rel="shortcut icon" href="planet-ringedfa.svg" type="image/x-icon" />
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+      /* === CSS EXCLUSIVO DA TELA DE AVISO === */
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        transition: background-color 0.5s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #000;
+      }
+
+      .screen {
+        color: #fff;
+        text-align: center;
+        opacity: 0;
+        animation: fadeInText 1.2s ease-in forwards;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 1rem;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-top: 10px;
+        padding: 15px;
+        line-height: 1.7;
+      }
+
+      h2 span {
+        color: rgb(0, 149, 255);
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      p {
+        font-size: 16px;
+        margin: 0.5rem 0;
+      }
+
+      #continueBtn {
+        margin-top: 2rem;
+        padding: 12px 24px;
+        font-size: 18px;
+        background: transparent;
+        color: #fff;
+        border: 3px solid #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        opacity: 0;
+        transition: transform 0.3s ease, opacity 0.4s ease,
+          border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      #continueBtn.show {
+        opacity: 1;
+        animation: blink 1.5s infinite;
+        animation-timing-function: ease-in-out;
+      }
+
+      #continueBtn.show:hover {
+        animation: borderRGB 3s linear infinite;
+        transform: scale(1.1);
+      }
+
+      #continueBtn.clicked {
+        background-color: #fff;
+        color: #000;
+        border-color: #fff;
+        opacity: 0;
+        animation: none;
+        transform: scale(1);
+        transition: background-color 0.5s ease, color 0.5s ease,
+          opacity 1s ease-out;
+      }
+
+      .fadeOut {
+        animation: fadeOut 1s;
+      }
+
+      @keyframes fadeInText {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+        }
+      }
+
+      @keyframes borderRGB {
+        0% {
+          border-color: red;
+          box-shadow: 0 0 30px 5px red;
+        }
+        33% {
+          border-color: lime;
+          box-shadow: 0 0 30px 5px lime;
+        }
+        66% {
+          border-color: blue;
+          box-shadow: 0 0 30px 5px blue;
+        }
+        100% {
+          border-color: red;
+          box-shadow: 0 0 30px 5px red;
+        }
+      }
+
+      @keyframes blink {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- === Tela de Aviso === -->
+    <div class="screen" id="aviso">
+      <h1>⚠️ Aviso do Bill Cipher</h1>
+      <p>O SkAI não é uma inteligência artificial de verdade</p>
+      <p>
+        Trata-se de um sistema que responderá algumas perguntas, relacionadas ao
+        nosso TCC
+      </p>
+      <p>
+        Logo, esperamos que você se divirta utilizando nossa "Inteligência
+        Artificial" 🤗
+      </p>
+      <h2>
+        Mais informações, acesse<br /><span
+          >https://skyfallgroup.com/project-saturn</span
+        >
+      </h2>
+      <button id="continueBtn" type="button">
+        Pressione aqui para continuar!
+      </button>
+    </div>
+
+    <!-- === Sistema SkAI === -->
+    <div class="sistema" id="sistema" style="display:none;">
+      <img src="img/SkAI_Orange.png" alt="">
+      <p>Bem-vindo ao SkAI<br>A inteligência artificial<br>da <span>Skyfall Group</span></p>
+      <p class="sb">Aqui você irá tirar suas dúvidas <br>com total segurança e uma<br>criatividade de <span class="span2">outro</span> mundo.</p>
+      <br>
+      <div class="system1">
+          <a href="pg02.html"><button>Iniciar o Sistema</button></a>
+      </div>
+      <div class="system2">
+          <a href="#"><button>Retornar ao Site Principal</button></a>
+      </div>
+      <p class="copy">Skyfall Group&copy; - 2025 - Todos os direitos reservados</p>
+    </div>
+
+    <audio id="clickSound" src="music/gravity falls.mp3" preload="auto"></audio>
+
+    <script>
+      const btn = document.getElementById("continueBtn");
+      const aviso = document.getElementById("aviso");
+      const sistema = document.getElementById("sistema");
+      const clickSound = document.getElementById("clickSound");
+
+      // Mostra o botão após o texto surgir
+      setTimeout(() => {
+        btn.classList.add("show");
+      }, 1200 + 1500);
+
+      btn.addEventListener("click", () => {
+        btn.disabled = true;
+        btn.classList.add("clicked");
+
+        clickSound.currentTime = 0;
+        clickSound.play();
+
+        setTimeout(() => {
+          aviso.classList.add("fadeOut");
+          setTimeout(() => {
+            document.title = "SkAI - Página Inicial";
+
+            // Remove estilos de flex do body
+            document.body.removeAttribute("style");
+            document.body.style.backgroundColor = "#fff";
+
+            aviso.style.display = "none";
+            sistema.style.display = "block";
+          }, 1000);
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

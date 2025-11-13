@@ -1,0 +1,190 @@
+/* ========== Editorial Font Family (.otf) ========== */
+
+/* Regular */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Italic */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-Italic.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Ultralight */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-Ultralight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Ultralight Italic */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-UltralightItalic.otf') format('opentype');
+  font-weight: 200;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Ultrabold */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-Ultrabold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Ultrabold Italic */
+@font-face {
+  font-family: 'Editorial';
+  src: url('../fonts/PPEditorialNew-UltraboldItalic.otf') format('opentype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+/*--- Configurações globais e variáveis ---*/
+
+:root {
+  --laranja: #ff6600;
+  --preto: #242424;
+  --offwhite: #fcfcf4;
+  --cinza: #bbb5b5;
+}
+
+/* Garante que o fundo sempre ocupe toda a tela */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--preto);
+}
+
+img {
+  height: 100px;
+  width: auto;
+  padding: 45px 0 40px 0;
+}
+
+/*--- Seção principal do sistema SkAI ---*/
+
+.sistema {
+  background-color: var(--preto);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  /* Animação de entrada suave */
+  opacity: 0;
+  animation: fadeIn 1.2s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sistema p {
+  margin-top: 0;
+  font-family: 'Editorial';
+  font-size: 2.75rem;
+  color: var(--offwhite);
+  padding: 20px;
+}
+
+.sistema p span {
+  color: var(--laranja);
+  font-style: italic;
+}
+
+.sistema p.sb {
+  margin-top: -2%;
+  font-size: 1.15rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sistema p.copy {
+  font-size: 0.95rem;
+  color: var(--cinza);
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+}
+
+.system1,
+.system2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 25px;
+  margin-top: -3px;
+}
+
+span.span2 {
+  color: var(--laranja);
+  font-style: italic;
+  font-family: 'Editorial';
+  font-size: 1.4rem;
+}
+
+.sistema button {
+  width: 300px;
+  height: 50px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  background-color: transparent;
+  color: var(--offwhite);
+  border-radius: 10px;
+  font-size: 1.05rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.6s ease;
+}
+
+.sistema button:hover {
+  background-color: var(--laranja);
+  border-color: var(--laranja);
+  box-shadow: 0 0 15px var(--laranja);
+  transform: scale(1.05);
+}
+
+/*--- Responsividade ---*/
+
+@media (max-width: 499px) {
+  .sistema p {
+    font-size: 2.25rem;
+  }
+
+  .sistema p.copy {
+    font-size: 0.85rem;
+    margin-top: 35px;
+  }
+
+  .sistema button {
+    width: 250px;
+    height: 45px;
+    font-size: 0.95rem;
+  }
+}

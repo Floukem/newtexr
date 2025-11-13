@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat IA Pixel</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Press Start 2P", monospace;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ====== TELA DE CARREGAMENTO ====== */
+  #loadingScreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    overflow: hidden;
+    animation: fadeOut 1s ease forwards;
+    animation-delay: 2.8s;
+  }
+
+  #loadingParticles {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .loading-text {
+    font-family: "Press Start 2P", monospace;
+    font-size: 28px;
+    letter-spacing: 3px;
+    display: flex;
+    gap: 4px;
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff69b4, 0 0 40px #ff69b4;
+    animation: neonPulse 1.5s infinite alternate;
+    z-index: 2;
+  }
+
+  .loading-text .pink { color: #ff69b4; }
+  .loading-text .white { color: #fff; }
+
+  @keyframes neonPulse {
+    0% { text-shadow: 0 0 8px #fff, 0 0 15px #ff69b4; transform: scale(1); }
+    100% { text-shadow: 0 0 20px #fff, 0 0 40px #ff69b4; transform: scale(1.05); }
+  }
+
+  @keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+
+  /* ------------------- CANVAS PARTICULAS ------------------- */
+  #particleCanvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ------------------- TEMAS ------------------- */
+  body.dark { background-color: #000; color: #fff; }
+  body.light { background-color: #f2f2f2; color: #000; }
+  body.green { background-color: #f2f2f2; color: #006400; }
+  body.vazio { background-color: #888; color: #111; }
+  body.cyber { background-color: #1a0033; color: #00ffff; }
+  body.sunset { background: linear-gradient(135deg, #ff7e5f, #feb47b); color: #fff; }
+  body.grimm { background-color: #0a0a0a; color: #d8a3ff; }
+
+  /* ------------------- BARRA SUPERIOR ------------------- */
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px 20px;
+    border-bottom: 2px solid;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* ------------------- BOTÃO OPÇÕES POR TEMA ------------------- */
+  .options-button { padding: 8px 12px; font-family: "Press Start 2P", monospace; font-size: 10px; cursor: pointer; border-radius: 4px; transition: 0.2s; background-color: transparent; }
+  body.dark .options-button { border: 2px solid #fff; color: #fff; }
+  body.dark .options-button:hover { background-color: #111; }
+  body.light .options-button { border: 2px solid #000; color: #000; }
+  body.light .options-button:hover { background-color: #e0e0e0; color: #000; }
+  body.green .options-button { border: 2px solid #006400; color: #006400; }
+  body.green .options-button:hover { background-color: #ccffcc; color: #006400; }
+  body.vazio .options-button { border: 2px solid #555; color: #111; }
+  body.vazio .options-button:hover { background-color: #777; color: #111; }
+  body.cyber .options-button { border: 2px solid #00ffff; color: #00ffff; }
+  body.cyber .options-button:hover { background-color: #330033; color: #00ffff; }
+  body.sunset .options-button { border: 2px solid #fff; color: #fff; }
+  body.sunset .options-button:hover { background-color: #ff9e7f; color: #111; }
+  body.grimm .options-button { border: 2px solid #d8a3ff; color: #d8a3ff; }
+  body.grimm .options-button:hover { background-color: #1a001a; color: #d8a3ff; }
+
+  /* ------------------- MENU FLUTUANTE ------------------- */
+  .options-menu { position: absolute; top: 45px; right: 20px; border-radius: 6px; padding: 10px; display: none; flex-direction: column; gap: 8px; z-index: 6; border: 2px solid; }
+  .options-menu button { background-color: inherit; color: inherit; border: 1px solid; font-family: "Press Start 2P", monospace; font-size: 9px; padding: 6px; cursor: pointer; transition: 0.2s; }
+  .options-menu button:hover { background-color: #111; }
+
+  /* ------------------- CHAT ------------------- */
+  .chat-container { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; scroll-behavior: smooth; z-index: 2; position: relative; }
+  .message { max-width: 80%; margin-bottom: 16px; padding: 12px 16px; border-radius: 6px; border: 2px solid; line-height: 1.5; word-wrap: break-word; font-size: 10px; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+  .user { align-self: flex-end; }
+
+  body.dark .message { background-color: #111; color: #fff; border-color: #fff; }
+  body.dark .user { background-color: #0078ff; color: #fff; }
+  body.light .message { background-color: #ddd; color: #000; border-color: #000; }
+  body.light .user { background-color: #0078ff; color: #fff; }
+  body.green .message { background-color: #ccffcc; color: #006400; border-color: #006400; }
+  body.green .user { background-color: #0f0; color: #000; border-color: #006400; }
+  body.vazio .message { background-color: #aaa; color: #111; border-color: #555; }
+  body.vazio .user { background-color: #555; color: #fff; border-color: #888; }
+  body.cyber .message { background-color: #3300ff; color: #00ffff; border-color: #00ffff; }
+  body.cyber .user { background-color: #00ffff; color: #000; border-color: #00ffff; }
+  body.sunset .message { background-color: #ffc28c; color: #111; border-color: #fff; }
+  body.sunset .user { background-color: #ffdd59; color: #000; border-color: #fff; }
+  body.grimm .message { background-color: #1a001a; color: #d8a3ff; border-color: #d8a3ff; }
+  body.grimm .user { background-color: #d8a3ff; color: #0a0a0a; border-color: #d8a3ff; }
+
+  /* ------------------- ÁREA DE ENTRADA ------------------- */
+  .input-area { display: flex; padding: 15px; border-top: 2px solid; z-index: 5; position: relative; }
+  .input-area input { flex: 1; padding: 10px; border-radius: 6px; font-family: "Press Start 2P", monospace; font-size: 10px; outline: none; border: 2px solid; background-color: inherit; color: inherit; }
+  ::placeholder { color: #777; }
+
+  /* ------------------- CAIXA DE TEMA ------------------- */
+  #themeBox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index: 10; justify-content:center; align-items:center; }
+  .theme-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.7); }
+  .theme-content { position: relative; background-color: #888; color: #111; padding: 20px; border: 2px solid #fff; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; z-index: 11; text-align: center; min-width: 200px; }
+  .theme-title { font-size: 12px; margin-bottom: 10px; }
+  .theme-content button { background-color: #aaa; color: #111; border: 1px solid #111; padding: 6px; cursor: pointer; font-family: "Press Start 2P", monospace; font-size: 10px; transition:0.2s; }
+  .theme-content button:hover { background-color: #777; }
+</style>
+</head>
+<body class="dark">
+
+<!-- ===== TELA DE CARREGAMENTO ===== -->
+<div id="loadingScreen">
+  <canvas id="loadingParticles"></canvas>
+  <div class="loading-text">
+    <span class="pink">Sk</span><span class="white">AI</span>
+  </div>
+</div>
+
+<canvas id="particleCanvas"></canvas>
+
+<div class="top-bar">
+  <button class="options-button" onclick="toggleMenu()">OPÇÕES</button>
+  <div class="options-menu" id="optionsMenu">
+    <button onclick="openThemeBox()">TEMA</button>
+    <button onclick="alert('Função ainda em desenvolvimento!')">OPÇÃO 2</button>
+    <button onclick="alert('Função ainda em desenvolvimento!')">OPÇÃO 3</button>
+    <button onclick="alert('Função ainda em desenvolvimento!')">OPÇÃO 4</button>
+  </div>
+</div>
+
+<div class="chat-container" id="chatContainer">
+  <div class="message bot">o futuro é na Skyfall</div></div>
+  <div class="message bot" style="opacity: 0.3;">CHAT TESTE</div>
+</div>
+
+<div class="input-area">
+  <input id="userInput" type="text" placeholder="DIGITE SUA MENSAGEM...">
+</div>
+        
+<div id="themeBox">
+  <div class="theme-overlay" onclick="closeThemeBox()"></div>
+  <div class="theme-content">
+    <div class="theme-title">ESCOLHA O TEMA</div>
+    <button onclick="setTheme('dark')">ESCURO</button>
+    <button onclick="setTheme('light')">CLARO</button>
+    <button onclick="setTheme('green')">GREEN</button>
+    <button onclick="setTheme('vazio')">VAZIO</button>
+    <button onclick="setTheme('cyber')">CYBER</button>
+    <button onclick="setTheme('sunset')">SUNSET</button>
+    <button onclick="setTheme('grimm')">GRIMM</button>
+  </div>
+</div>
+
+<script>
+const chatContainer = document.getElementById("chatContainer");
+const userInput = document.getElementById("userInput");
+const optionsMenu = document.getElementById("optionsMenu");
+const themeBox = document.getElementById("themeBox");
+const canvas = document.getElementById("particleCanvas");
+const ctx = canvas.getContext("2d");
+
+// ====== REMOVER TELA DE CARREGAMENTO ======
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    document.getElementById("loadingScreen").style.display = "none";
+  }, 3500);
+});
+
+// ====== PARTÍCULAS NA TELA DE CARREGAMENTO ======
+const loadingCanvas = document.getElementById("loadingParticles");
+const lctx = loadingCanvas.getContext("2d");
+let loadParticles = [];
+
+function resizeLoadingCanvas() {
+  loadingCanvas.width = window.innerWidth;
+  loadingCanvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeLoadingCanvas);
+resizeLoadingCanvas();
+
+for (let i = 0; i < 60; i++) {
+  loadParticles.push({
+    x: Math.random() * loadingCanvas.width,
+    y: Math.random() * loadingCanvas.height,
+    size: Math.random() * 2 + 1,
+    speedX: (Math.random() - 0.5) * 0.4,
+    speedY: (Math.random() - 0.5) * 0.4,
+    color: Math.random() > 0.5 ? "rgba(255,105,180,0.8)" : "rgba(255,255,255,0.8)"
+  });
+}
+
+function animateLoadingParticles() {
+  lctx.clearRect(0, 0, loadingCanvas.width, loadingCanvas.height);
+  for (let p of loadParticles) {
+    lctx.beginPath();
+    lctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    lctx.fillStyle = p.color;
+    lctx.fill();
+    p.x += p.speedX;
+    p.y += p.speedY;
+    if (p.x < 0 || p.x > loadingCanvas.width) p.speedX *= -1;
+    if (p.y < 0 || p.y > loadingCanvas.height) p.speedY *= -1;
+  }
+  requestAnimationFrame(animateLoadingParticles);
+}
+animateLoadingParticles();
+
+// ====== PARTÍCULAS DE FUNDO ======
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function initParticles(theme) {
+  particles = [];
+  if (theme !== "vazio" && theme !== "grimm") return;
+  let color = theme === "grimm" ? "rgba(216,163,255,0.5)" : "rgba(0,0,0,0.6)";
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 3 + 1,
+      speed: Math.random() * 1 + 0.3,
+      color: color
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (document.body.classList.contains("vazio") || document.body.classList.contains("grimm")) {
+    for (let p of particles) {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      p.y -= p.speed;
+      if (p.y < 0) p.y = canvas.height;
+    }
+  }
+  requestAnimationFrame(animate);
+}
+initParticles(document.body.className);
+animate();
+
+// ====== MENU / TEMA ======
+function toggleMenu() {
+  optionsMenu.style.display = optionsMenu.style.display === "flex" ? "none" : "flex";
+}
+function openThemeBox() {
+  themeBox.style.display = "flex";
+  optionsMenu.style.display = "none";
+}
+function closeThemeBox() {
+  themeBox.style.display = "none";
+}
+function setTheme(theme) {
+  document.body.className = theme;
+  initParticles(theme);
+  closeThemeBox();
+}
+
+// ====== CHAT ======
+function addMessage(text, sender) {
+  const msg = document.createElement("div");
+  msg.classList.add("message", sender);
+  msg.textContent = text;
+  chatContainer.appendChild(msg);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function typeMessage(text, sender, delay = 30) {
+  const msg = document.createElement("div");
+  msg.classList.add("message", sender);
+  chatContainer.appendChild(msg);
+  let index = 0;
+  const interval = setInterval(() => {
+    msg.textContent = text.substring(0, index++);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (index > text.length) clearInterval(interval);
+  }, delay);
+}
+
+// ====== ESTADO ======
+let currentStep = "menu";
+let waitingForFeedback = false;
+
+// ====== INÍCIO DO CHAT ======
+window.addEventListener("load", () => {
+  setTimeout(startConversation, 2500);
+});
+
+function startConversation() {
+  typeMessage("Olá, tudo bem? Esse daqui é um chat teste da empresa Skyfall para facilitar a comunicação e relatar erros no site.", "bot");
+  setTimeout(() => {
+    typeMessage("Para facilitar o repórter de erros, deixaremos algumas alternativas para você escolher:", "bot");
+    setTimeout(showMainOptions, 2000);
+  }, 7000);
+}
+
+function showMainOptions() {
+  setTimeout(() => addMessage("A) Problemas com o site e usabilidade", "bot"), 500);
+  setTimeout(() => addMessage("B) Problemas na assinatura", "bot"), 1500);
+  setTimeout(() => addMessage("C) Desejo cancelar assinatura", "bot"), 2500);
+  currentStep = "menu";
+}
+
+userInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+
+// ====== FUNÇÃO DE RESET (ANIMAÇÃO DE LIMPEZA) ======
+function resetChat() {
+  typeMessage("Reiniciando conversa...", "bot");
+  setTimeout(() => {
+    const messages = Array.from(chatContainer.querySelectorAll(".message"));
+    messages.reverse().forEach((msg, i) => {
+      setTimeout(() => {
+        msg.style.transition = "opacity 0.4s, transform 0.4s";
+        msg.style.opacity = "0";
+        msg.style.transform = "translateY(20px)";
+        setTimeout(() => msg.remove(), 400);
+      }, i * 100);
+    });
+
+    // Recomeça após apagar
+    setTimeout(() => {
+      chatContainer.innerHTML = "";
+      currentStep = "menu";
+      waitingForFeedback = false;
+      startConversation();
+    }, messages.length * 100 + 2000);
+  }, 2000);
+}
+
+// ====== FUNÇÃO PRINCIPAL ======
+function sendMessage() {
+  const text = userInput.value.trim();
+  const upperText = text.toUpperCase();
+  if (!text) return;
+  addMessage(text, "user");
+  userInput.value = "";
+
+  // ===== FEEDBACK =====
+  if (waitingForFeedback) {
+    waitingForFeedback = false;
+    typeMessage("Obrigado por enviar o problema, o seu feedback é muito importante!", "bot");
+    setTimeout(resetChat, 4000);
+    return;
+  }
+
+  // ===== MENU PRINCIPAL =====
+  if (currentStep === "menu") {
+    if (upperText === "A") {
+      typeMessage("Desculpe o estresse que a gente poderia ter causado em você. Por favor, escreva uma mensagem de texto contando a sua experiência para nossa equipe — assim iremos melhorar o que tiver que melhorar.", "bot");
+      waitingForFeedback = true;
+    } else if (upperText === "B") {
+      typeMessage("Entendi! Escolha uma das opções abaixo:", "bot");
+      setTimeout(() => addMessage("1) Não consigo fazer pagamento", "bot"), 1000);
+      setTimeout(() => addMessage("2) Paguei mas não recebi os benefícios", "bot"), 2000);
+      currentStep = "assinatura";
+    } else if (upperText === "C") {
+      typeMessage("Poxa, isso é realmente triste... Iremos entrar em contato com você para cancelar sua assinatura. Um dos nossos profissionais irá passar todos os passos assim que possível.", "bot");
+      setTimeout(resetChat, 6000);
+    } else {
+      typeMessage("Opção inválida. Digite A, B ou C.", "bot");
+    }
+
+  // ===== PROBLEMAS DE ASSINATURA =====
+  } else if (currentStep === "assinatura") {
+    if (upperText === "1") {
+      typeMessage("Desculpe o estresse que a gente poderia ter causado em você. Por favor, escreva uma mensagem de texto contando a sua experiência para nossa equipe — assim iremos melhorar o que tiver que melhorar.", "bot");
+      waitingForFeedback = true;
+    } else if (upperText === "2") {
+      typeMessage("Eu sinto muito por isso e a gente vai resolver isso agora! Por favor, relate isso à central de ajuda. Nós iremos enviar um e-mail para a conta cadastrada neste perfil com todas as informações necessárias para resolvermos o problema.", "bot");
+      setTimeout(resetChat, 6000);
+    } else {
+      typeMessage("Opção inválida. Digite 1 ou 2.", "bot");
+    }
+  }
+}
+</script>
+</body>
+</html>

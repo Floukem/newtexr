@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>SkAI - Carregando...</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .boot-screen {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo {
+        position: absolute;
+        max-width: 25% !important;
+        height: auto;
+        opacity: 0;
+        transition: opacity 3s ease-in-out;
+      }
+
+      .logo1 {
+        position: absolute;
+        max-width: 10% !important;
+        height: auto;
+        opacity: 0;
+        transition: opacity 3s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="boot-screen">
+      <img
+        id="logo-nintendo"
+        class="logo"
+        src="img/Logos_Skyfall WiiU/Skyfall-Logo-With-Slogan.png"
+        alt="Nintendo"
+      />
+      <img
+        id="logo-wiiu"
+        class="logo1"
+        src="img/Logos_Skyfall WiiU/SKAI Logo.png"
+        alt="Wii U"
+      />
+    </div>
+
+    <audio
+      id="audio"
+      src="music/Nintendo Wii U - Startup Intro [Qs8P3DDmcDM].mp3"
+      autoplay
+      preload="auto"
+    ></audio>
+
+    <script>
+      const logoNintendo = document.getElementById("logo-nintendo");
+      const logoWiiU = document.getElementById("logo-wiiu");
+      const audio = document.getElementById("audio");
+
+      // Mostrar logo Nintendo imediatamente
+      logoNintendo.style.opacity = 1;
+
+      // 2s depois: iniciar crossfade lento para Wii U
+      setTimeout(() => {
+        logoNintendo.style.opacity = 0;
+        logoWiiU.style.opacity = 1;
+      }, 2000);
+
+      // Redirecionamento aos 14s
+      const REDIRECT_URL = "pg01.html"; // substitua pelo seu link
+      const REDIRECT_TIME = 9700; // ms
+
+      // Inicia fade-out do áudio 1s antes do redirecionamento
+      setTimeout(() => {
+        let fadeOutInterval = setInterval(() => {
+          if (audio.volume > 0.05) {
+            audio.volume -= 0.05;
+          } else {
+            audio.volume = 0;
+            clearInterval(fadeOutInterval);
+            window.location.href = REDIRECT_URL;
+          }
+        }, 50); // 50ms entre cada redução de volume
+      }, REDIRECT_TIME - 1000); // começa 1s antes do redirecionamento
+    </script>
+  </body>
+</html>

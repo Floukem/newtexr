@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dupla Faixa Animada</title>
+<style>
+  :root{
+    --ribbon-height: 72px;
+    --speed: 18s; /* duração do loop (maior = mais lento) */
+    --bg: #0f0f0f;
+    --ribbon1: #1e1e1e;
+    --ribbon2: #111;
+    --text: #f5f5f5;
+    --dot: #ffb400;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%; margin:0; background:var(--bg); font-family: Arial, Helvetica, sans-serif; color:var(--text);}
+
+  /* container que corta as faixas */
+  .ribbon-wrap{
+    position: relative;
+    width: 100%;
+    height: calc(var(--ribbon-height) * 2 + 24px);
+    overflow: hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 20px 0;
+  }
+
+  /* base da faixa */
+  .ribbon{
+    position: absolute;
+    left: 50%;
+    transform-origin: center;
+    display:block;
+    width: 160vw; /* suficientemente largo para cobrir a animação */
+    height: var(--ribbon-height);
+    line-height: var(--ribbon-height);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  /* conteúdo rolante interno (duplicado para loop contínuo) */
+  .ribbon .inner{
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding-left: 12px;
+    padding-right: 12px;
+    will-change: transform;
+  }
+
+  /* texto e ponto (usar span para manter inline) */
+  .ribbon .item {
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 1px;
+    display: inline-flex;
+    align-items:center;
+    gap: 12px;
+  }
+  .ribbon .dot {
+    display:inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--dot);
+    flex: 0 0 12px;
+  }
+
+  /* primeira faixa (inclinada para a esquerda) */
+  .ribbon.one{
+    top: 12px;
+    transform: translateX(-50%) rotate(-4deg);
+    background: linear-gradient(90deg, var(--ribbon1), #2a2a2a);
+  }
+
+  /* segunda faixa (inclinada para a direita) */
+  .ribbon.two{
+    top: calc(var(--ribbon-height) + 12px);
+    transform: translateX(-50%) rotate(4deg);
+    background: linear-gradient(90deg, var(--ribbon2), #191919);
+  }
+
+  /* animação: move a inner da esquerda para a direita (ou inverso) */
+  .ribbon.one .inner {
+    animation: scroll-left linear infinite;
+    animation-duration: var(--speed);
+    animation-play-state: running;
+  }
+  .ribbon.two .inner {
+    animation: scroll-right linear infinite;
+    animation-duration: calc(var(--speed) * 1.1); /* ligeira diferença de velocidade */
+    animation-play-state: running;
+  }
+
+  /* pausam ao passar o mouse */
+  .ribbon:hover .inner { animation-play-state: paused; }
+
+  /* keyframes usam transform no próprio elemento inner (não mexe na rotate da faixa) */
+  @keyframes scroll-left {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); } /* dado que o conteúdo está duplicado */
+  }
+  @keyframes scroll-right {
+    0%   { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  /* duplicação do conteúdo: .inner > .track (conteúdo) repetido 2x */
+  .track{
+    display:inline-flex;
+    gap: 24px;
+    align-items:center;
+  }
+
+  /* responsivo: texto menor em telas estreitas */
+  @media (max-width:600px){
+    :root{--ribbon-height:56px;}
+    .ribbon .item{font-size:0.95rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="ribbon-wrap">
+
+  <!-- Faixa 1 -->
+  <div class="ribbon one" aria-hidden="false">
+    <div class="inner" role="marquee">
+      <!-- duplicamos a track duas vezes para loop suave -->
+      <div class="track">
+        <span class="item">NEWSLETTER MISSÃO <span class="dot" aria-hidden="true"></span> NOTÍCIAS EM PRIMEIRA MÃO</span>
+        <span class="item">INSCRIÇÕES ABERTAS <span class="dot" aria-hidden="true"></span> ASSINE JÁ</span>
+        <span class="item">ATUALIZAÇÕES DIÁRIAS <span class="dot" aria-hidden="true"></span> ÚLTIMAS</span>
+      </div>
+
+      <div class="track">
+        <span class="item">NEWSLETTER MISSÃO <span class="dot" aria-hidden="true"></span> NOTÍCIAS EM PRIMEIRA MÃO</span>
+        <span class="item">INSCRIÇÕES ABERTAS <span class="dot" aria-hidden="true"></span> ASSINE JÁ</span>
+        <span class="item">ATUALIZAÇÕES DIÁRIAS <span class="dot" aria-hidden="true"></span> ÚLTIMAS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faixa 2 (movendo na direção oposta) -->
+  <div class="ribbon two" aria-hidden="false">
+    <div class="inner" role="marquee">
+      <div class="track">
+        <span class="item">NOTÍCIAS EM PRIMEIRA MÃO <span class="dot" aria-hidden="true"></span> NEWSLETTER MISSÃO</span>
+        <span class="item">EXCLUSIVO: ENTREVISTAS <span class="dot" aria-hidden="true"></span> HOJE</span>
+        <span class="item">NOVIDADES &amp; EVENTOS <span class="dot" aria-hidden="true"></span> SAIBA MAIS</span>
+      </div>
+
+      <div class="track">
+        <span class="item">NOTÍCIAS EM PRIMEIRA MÃO <span class="dot" aria-hidden="true"></span> NEWSLETTER MISSÃO</span>
+        <span class="item">EXCLUSIVO: ENTREVISTAS <span class="dot" aria-hidden="true"></span> HOJE</span>
+        <span class="item">NOVIDADES &amp; EVENTOS <span class="dot" aria-hidden="true"></span> SAIBA MAIS</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

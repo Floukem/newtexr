@@ -1,0 +1,179 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+/* ========== Editorial Font Family (.otf) ========== */
+
+/* Regular */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+  
+/* Italic */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-Italic.otf') format('opentype');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+  
+/* Ultralight */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-Ultralight.otf') format('opentype');
+    font-weight: 200;
+    font-style: normal;
+    font-display: swap;
+}
+  
+/* Ultralight Italic */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-UltralightItalic.otf') format('opentype');
+    font-weight: 200;
+    font-style: italic;
+    font-display: swap;
+}
+  
+/* Ultrabold */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-Ultrabold.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+  
+/* Ultrabold Italic */
+@font-face {
+    font-family: 'Editorial';
+    src: url('fonts/PPEditorialNew-UltraboldItalic.otf') format('opentype');
+    font-weight: 800;
+    font-style: italic;
+    font-display: swap;
+}
+
+/*---Site Final---*/
+
+:root {
+    --laranja: #ff6600;
+    --laranja_translucido: #ff660071;
+    --preto: #242424;
+    --offwhite: #fcfcf4;
+    --cinza: #bbb5b5;
+}
+    
+img {
+    height: 100px;
+    width: auto;
+    margin-top: 50px;
+    margin-bottom: -40px;
+}
+
+body {
+    background-color: var(--preto);
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+    text-align: center;
+}
+
+p {
+    margin-top: 5%;
+    font-family: 'Editorial';
+    font-size: 2.75rem;
+    color: var(--offwhite);
+}
+
+p span {
+    color: var(--laranja);
+    font-style: italic;
+}
+
+p.sb {
+    margin-top: -1%;
+    font-size: 1.15rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+p.copy {
+    font-size: 0.95rem;
+    color: var(--cinza);
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+}
+
+.system1, .system2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 25px;
+}
+
+span.span2 {
+    color: var(--laranja);
+    font-style: italic;
+    font-family: 'Editorial';
+    font-size: 1.4rem;
+}
+
+button {
+    width: 300px;
+    height: 50px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    background-color: transparent;
+    color: var(--offwhite);
+    border-radius: 10px;
+    font-size: 1.05rem;
+    border: none;
+    transition: 1s;
+}
+
+button:hover {
+    background-color: var(--laranja);
+}
+
+.input-single {
+    position: relative;
+    margin: 20px 0;
+}
+
+.input-single label {
+    position: absolute;
+    left: 21px; /* empurrado mais para a direita */
+    bottom: 5px;
+    color: var(--offwhite);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.8rem;
+    transition: all .5s;
+    pointer-events: none;
+}
+
+.input {
+    width: 300px;
+    height: 20px;
+    border: 0;
+    border-bottom: 2px solid var(--laranja);
+    padding: 5px;
+    font-size: 0.8rem;
+    background-color: transparent;
+    color: var(--offwhite);
+    outline: 0;
+    border-radius: 7px;
+    transition: 1s;
+    font-family: 'Poppins', sans-serif;
+}
+
+form .input-single .input:focus ~ label,
+form .input-single .input:valid ~ label {
+    transform: translateY(-24px);
+    font-size: 12px;
+}
+
+.input:hover {
+    background-color: var(--laranja_translucido);
+}
