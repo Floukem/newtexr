@@ -14,6 +14,12 @@
             font-weight: bold;
             text-align: center;
         }
+
+        /* Estilo básico do formulário (opcional) */
+        .input-single { margin-bottom: 15px; }
+        .input { padding: 10px; width: 100%; box-sizing: border-box; }
+        .system1 { padding: 10px 20px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .system1:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
@@ -41,12 +47,12 @@
     <!-- EmailJS -->
     <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script>
-        // Inicializa EmailJS
-        emailjs.init("azDURjcyHJTjdLjye"); // sua Public Key
+        // Inicializa EmailJS com sua Public Key
+        emailjs.init("azDURjcyHJTjdLjye");
 
         // Captura o submit do formulário
         document.getElementById("meuForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Evita recarregar a página
 
             // Coleta os dados do formulário
             const formData = {
@@ -54,22 +60,21 @@
                 email: document.getElementById("email").value
             };
 
-            console.table(formData); // debug
+            console.table(formData); // Debug
 
             const serviceID = "service_6f7s3vc";
             const templateID = "template_jkps4ko";
 
-            // Envia o e-mail
+            // Envia os dados para EmailJS
             emailjs.send(serviceID, templateID, formData)
                 .then(function(response) {
                     console.log("E-mail enviado com sucesso!", response.status, response.text);
                     document.getElementById("status").innerText = "E-mail enviado com sucesso!";
-                    // Limpa o formulário
-                    document.getElementById("meuForm").reset();
+                    document.getElementById("meuForm").reset(); // Limpa o formulário
                 })
                 .catch(function(error) {
                     console.error("Erro ao enviar e-mail:", error);
-                    document.getElementById("status").innerText = "Erro ao enviar o e-mail.";
+                    document.getElementById("status").innerText = "Erro ao enviar o e-mail. Tente novamente.";
                 });
         });
     </script>
